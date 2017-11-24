@@ -1,0 +1,547 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ProjectBdatabase.views;
+
+import ProjectBdatabase.databaseUtil.Connector;
+import ProjectBdatabase.models.PokerEvent;
+import ProjectBdatabase.models.Speler;
+import ProjectBdatabase.models.Masterclass;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Ruben
+ */
+public class SpelerOpties extends javax.swing.JFrame {
+
+    private HoofdScherm hoofdScherm;
+    private ArrayList<Speler> spelers;
+    private ArrayList<PokerEvent> events;
+    private ArrayList<Masterclass> masterclasses;
+
+    public SpelerOpties(HoofdScherm hoofdScherm) {
+        this.hoofdScherm = hoofdScherm;
+        initComponents();
+
+        Vullijst();
+        vulCombobox();
+        vulComboboxmc();
+
+    }
+
+    private void vulCombobox() {
+        events = new ArrayList();
+        DefaultComboBoxModel modelEvents = new DefaultComboBoxModel();
+        try {
+            //Connectie ophalen met behulp van DataBaseConnector
+            Connection conn = Connector.getConnection();
+
+            //Statement object aanmaken met behulp van zojuist aangemaakte connectie
+            Statement stat = conn.createStatement();
+
+            //Klanten ophalen uit database
+            ResultSet result = stat.executeQuery("SELECT * FROM poker_event PE WHERE PE.pe_code IN(SELECT t.pe_code FROM toernooi t)");
+
+            //Resultset doorlopen.
+            while (result.next()) {
+                int eventID = result.getInt("pe_code");
+                String naam = result.getString("naam");
+                String datum = result.getString("datum");
+                String postcode = result.getString("postcode");
+                String huisnummer = result.getString("huisnummer");
+                int aantal_deelnemers = result.getInt("aantal_deelnemers");
+
+                PokerEvent pokerevents = new PokerEvent(eventID, naam, datum, postcode, huisnummer, aantal_deelnemers);
+                events.add(pokerevents);
+                modelEvents.addElement(pokerevents.pe_code() + " " + pokerevents.naam());
+
+            }
+            this.cbPokerEvent.setModel(modelEvents);
+
+            //Afsluiten van resources.
+            result.close();
+            stat.close();
+
+        } catch (SQLException exc) {
+            System.err.println("Sql fout bij het ophalen van toernooien: " + exc.toString());
+        }
+
+    }
+
+    private void vulComboboxmc() {
+        masterclasses = new ArrayList();
+        DefaultComboBoxModel modelEvents = new DefaultComboBoxModel();
+        try {
+            //Connectie ophalen met behulp van DataBaseConnector
+            Connection conn = Connector.getConnection();
+
+            //Statement object aanmaken met behulp van zojuist aangemaakte connectie
+            Statement stat = conn.createStatement();
+
+            //Klanten ophalen uit database
+            ResultSet result = stat.executeQuery("SELECT * FROM poker_event pe JOIN masterclass m ON pe.pe_code = m.pe_code");
+
+            //Resultset doorlopen.
+            while (result.next()) {
+                int eventID = result.getInt("pe.pe_code");
+                String naam = result.getString("pe.naam");
+                String datum = result.getString("pe.datum");
+                String postcode = result.getString("pe.postcode");
+                String huisnummer = result.getString("pe.huisnummer");
+                int aantal_deelnemers = result.getInt("pe.aantal_deelnemers");
+                int mRating = result.getInt("m.minimale_rating");
+                int mSpelers = result.getInt("m.max_aantal_spelers");
+                String omschrijving = result.getString("m.omschrijving");
+                double prijs = result.getDouble("m.prijs");
+                int leraar = result.getInt("m.leraar");
+
+                Masterclass masterclass = new Masterclass(eventID, naam, datum, postcode, huisnummer, aantal_deelnemers, mRating, mSpelers, omschrijving, prijs, leraar);
+
+                masterclasses.add(masterclass);
+                modelEvents.addElement(masterclass.pe_code() + " " + masterclass.naam());
+
+            }
+            this.cbPokerEventm.setModel(modelEvents);
+
+            //Afsluiten van resources.
+            result.close();
+            stat.close();
+
+        } catch (SQLException exc) {
+            System.err.println("Sql fout bij het ophalen van toernooien: " + exc.toString());
+        }
+
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup3 = new javax.swing.ButtonGroup();
+        buttonGroup4 = new javax.swing.ButtonGroup();
+        buttonGroup5 = new javax.swing.ButtonGroup();
+        buttonGroup6 = new javax.swing.ButtonGroup();
+        buttonGroup7 = new javax.swing.ButtonGroup();
+        btClose = new javax.swing.JButton();
+        btAdd = new javax.swing.JButton();
+        btEdit = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbSpelers = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        cbPokerEvent = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        cbPokerEventm = new javax.swing.JComboBox();
+        jButton3 = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Spelers");
+
+        btClose.setText("Sluit");
+        btClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCloseActionPerformed(evt);
+            }
+        });
+
+        btAdd.setText("Toevoegen");
+        btAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAddActionPerformed(evt);
+            }
+        });
+
+        btEdit.setText("Aanpassen");
+        btEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEditActionPerformed(evt);
+            }
+        });
+
+        tbSpelers.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"1", "", null, null, null, null, null, null, null},
+                {"2", null, null, null, null, null, null, null, null},
+                {"3", null, null, null, null, null, null, null, null},
+                {"4", null, null, null, null, null, null, null, null},
+                {"5", null, null, null, null, null, null, null, null},
+                {"6", null, null, null, null, null, null, null, null},
+                {"7", null, null, null, null, null, null, null, null},
+                {"8", null, null, null, null, null, null, null, null},
+                {"9", null, null, null, null, null, null, null, null},
+                {"10", null, null, null, null, null, null, null, null},
+                {"11", null, null, null, null, null, null, null, null},
+                {"12", null, null, null, null, null, null, null, null},
+                {"13", null, null, null, null, null, null, null, null},
+                {"14", null, null, null, null, null, null, null, null},
+                {"15", null, null, null, null, null, null, null, null},
+                {"16", null, null, null, null, null, null, null, null},
+                {"17", null, null, null, null, null, null, null, null},
+                {"18", null, null, null, null, null, null, null, null},
+                {"19", null, null, null, null, null, null, null, null},
+                {"20", null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Speler ID:", "Naam:", "Postcode", "Huisnummer", "Woonplaats:", "Telefoonnummer:", "Email", "Rating:", "Gewonnen inleggeld"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tbSpelers);
+
+        jLabel1.setText("Zoek op spelersnaam:");
+
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField1KeyReleased(evt);
+            }
+        });
+
+        cbPokerEvent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbPokerEventActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Selecteer toernooi");
+
+        jLabel3.setText("om spelers in te schrijven:");
+
+        jButton2.setText("Inschrijven");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Selecteer Masterclass");
+
+        jLabel5.setText("om spelers in te schrijven:");
+
+        cbPokerEventm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbPokerEventmActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Inschrijven");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btAdd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btEdit))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1082, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btClose)
+                        .addGap(6, 6, 6))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cbPokerEvent, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbPokerEventm, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton2)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jButton3)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5))
+                                .addGap(0, 28, Short.MAX_VALUE)))
+                        .addContainerGap())))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3)
+                        .addGap(10, 10, 10)
+                        .addComponent(cbPokerEvent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)
+                        .addGap(10, 10, 10)
+                        .addComponent(cbPokerEventm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btClose)
+                    .addComponent(btAdd)
+                    .addComponent(btEdit))
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCloseActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btCloseActionPerformed
+
+    private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
+        SpelerToevoegen spelerToevoegen = new SpelerToevoegen(this);
+        spelerToevoegen.setVisible(true);
+    }//GEN-LAST:event_btAddActionPerformed
+
+    public void Vullijst() {
+        String[] kolommen = {"Speler ID:", "Naam:", "Huisnummer:", "Postcode:", "Woonplaats:", "Telefoonnummer:", "E-mail:", "Rating:", "Gewonnen inleggeld:"};
+        spelers = new ArrayList();
+        DefaultTableModel spelerlijst = new DefaultTableModel(kolommen, 0);
+        try {
+            //Connectie ophalen met behulp van DataBaseConnector
+            Connection conn = Connector.getConnection();
+
+            //Statement object aanmaken met behulp van zojuist aangemaakte connectie
+            Statement stat = conn.createStatement();
+
+            //Klanten ophalen uit database
+            ResultSet result = stat.executeQuery("SELECT * FROM speler");
+
+            //Resultset doorlopen.
+            while (result.next()) {
+                int nummer = result.getInt("s_code");
+                String naam = result.getString("naam");
+                String huisnummer = result.getString("huisnummer");
+                String postcode = result.getString("postcode");
+                String woonplaats = result.getString("woonplaats");
+                String telefoonnummer = result.getString("telefoonnummer");
+                String email = result.getString("email");
+                int rating = result.getInt("rating");
+                double totaalgewonnengeld = result.getDouble("totaalgewonnengeld");
+
+                Speler speler = new Speler(nummer, naam, huisnummer, postcode, woonplaats, telefoonnummer, email, rating, totaalgewonnengeld);
+                spelers.add(speler);
+                String[] spelerInfo = {String.valueOf(speler.s_code()), speler.naam(), String.valueOf(speler.huisnummer()), speler.postcode(), speler.woonplaats(), speler.telefoonnummer(), speler.email(), String.valueOf(speler.rating()), String.valueOf(speler.totaalgewonnengeld())};
+                spelerlijst.addRow(spelerInfo);
+
+            }
+            tbSpelers.setModel(spelerlijst);
+
+            //Afsluiten van resources.
+            result.close();
+            stat.close();
+
+        } catch (SQLException exc) {
+            System.err.println("Sql fout bij het ophalen van klanten: " + exc.toString());
+        }
+
+    }
+    private void btEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditActionPerformed
+        try {
+            int colIndex = tbSpelers.getSelectedRow();
+            SpelerAanpassen spelerAanpassen = new SpelerAanpassen(this, spelers.get(colIndex));
+
+            spelerAanpassen.setVisible(true);
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+        }
+    }//GEN-LAST:event_btEditActionPerformed
+
+    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+        String invoer = jTextField1.getText();
+        String[] kolommen = {"Speler ID:", "Naam:", "Huisnummer:", "Postcode:", "Woonplaats:", "Telefoonnummer:", "Rating:"};
+
+        spelers = new ArrayList();
+        DefaultTableModel spelerlijst = new DefaultTableModel(kolommen, 0);
+
+        try {
+            Connection conn = Connector.getConnection();
+            String selectSpeler = "Select * from speler where naam like ? ;";
+            PreparedStatement prepStat = conn.prepareStatement(selectSpeler);
+            prepStat.setString(1, "%" + invoer + "%");
+            ResultSet result = prepStat.executeQuery();
+
+            while (result.next()) {
+                int spelerID = result.getInt("s_code");
+                String naam = result.getString("naam");
+                String postcode = result.getString("postcode");
+                String huisnummer = result.getString("huisnummer");
+                String woonplaats = result.getString("woonplaats");
+                String email = result.getString("email");
+                String telefoonnummer = result.getString("telefoonnummer");
+                int rating = result.getInt("rating");
+                double totaalgewonnengeld = result.getDouble("totaalgewonnengeld");
+
+                Speler speler = new Speler(spelerID, naam, huisnummer, postcode, woonplaats, telefoonnummer, email, rating, totaalgewonnengeld);
+                spelers.add(speler);
+                String[] spelerInfo = {String.valueOf(speler.s_code()), speler.naam(), String.valueOf(speler.huisnummer()), speler.postcode(), speler.woonplaats(), speler.telefoonnummer(), String.valueOf(speler.rating()), String.valueOf(speler.totaalgewonnengeld())};
+                spelerlijst.addRow(spelerInfo);
+            }
+            tbSpelers.setModel(spelerlijst);
+
+        } catch (SQLException exc) {
+            System.err.println("Sql fout bij het ophalen van klanten: " + exc.toString());
+        }
+
+    }//GEN-LAST:event_jTextField1KeyReleased
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            int[] colIndex = tbSpelers.getSelectedRows();
+
+            int selected = this.cbPokerEvent.getSelectedIndex();
+            PokerEvent geselecteerd = events.get(selected);
+
+            try {
+                for (int i = 0; i < colIndex.length; i++) {
+                    Connection conn = Connector.getConnection();
+                    Statement stat = conn.createStatement();
+
+                    String prepStatInsertKlant = "INSERT INTO inschrijving ( pe_code,s_code,betaald) "
+                            + "VALUES (?,?,0)";
+                    PreparedStatement prepStat = conn.prepareStatement(prepStatInsertKlant);
+
+                    prepStat.setInt(1, geselecteerd.pe_code());
+                    prepStat.setInt(2, spelers.get(colIndex[i]).s_code());
+
+                    prepStat.executeUpdate();
+                    stat.close();
+
+                }
+                JOptionPane.showMessageDialog(this, "Inschrijving opgeslagen in de database");
+
+            } catch (SQLException exc) {
+                JOptionPane.showMessageDialog(this, "Inschrijving niet opgeslagen in de database" + exc.toString());
+            }
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void cbPokerEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPokerEventActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbPokerEventActionPerformed
+
+    private void cbPokerEventmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPokerEventmActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbPokerEventmActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        try {
+            int[] colIndex = tbSpelers.getSelectedRows();
+            int leraar = 0;
+            int selected = this.cbPokerEventm.getSelectedIndex();
+            Masterclass geselecteerd = masterclasses.get(selected);
+
+            try {
+                for (int i = 0; i < colIndex.length; i++) {
+                    Connection conn = Connector.getConnection();
+                    Statement stat = conn.createStatement();
+
+                    String prepStatInsertKlant = "INSERT INTO inschrijving ( pe_code,s_code,betaald) "
+                            + "VALUES (?,?,0)";
+                    PreparedStatement prepStat = conn.prepareStatement(prepStatInsertKlant);
+
+                    prepStat.setInt(1, geselecteerd.pe_code());
+                    prepStat.setInt(2, spelers.get(colIndex[i]).s_code());
+
+                    if (spelers.get(colIndex[i]).s_code() != geselecteerd.s_code()) {
+                        prepStat.executeUpdate();
+                        stat.close();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Deze speler is de leraar van de masterclass");
+                        leraar = 1;
+                    }
+                }
+                if (leraar != 1) {
+                    JOptionPane.showMessageDialog(this, "Inschrijving opgeslagen in de database");
+                }
+
+            } catch (SQLException exc) {
+                JOptionPane.showMessageDialog(this, "Inschrijving niet opgeslagen in de database" + exc.toString());
+            }
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btAdd;
+    private javax.swing.JButton btClose;
+    private javax.swing.JButton btEdit;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.ButtonGroup buttonGroup4;
+    private javax.swing.ButtonGroup buttonGroup5;
+    private javax.swing.ButtonGroup buttonGroup6;
+    private javax.swing.ButtonGroup buttonGroup7;
+    private javax.swing.JComboBox cbPokerEvent;
+    private javax.swing.JComboBox cbPokerEventm;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tbSpelers;
+    // End of variables declaration//GEN-END:variables
+}

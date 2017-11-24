@@ -1,0 +1,5 @@
+projectbdatabase.views.HuidigToernooiSpelerRegistratie
+projectbdatabase.views.HuidigToernooiSpelerRegistratie$2
+projectbdatabase.views.HuidigToernooiSpelerRegistratie$1
+projectbdatabase.views.HuidigToernooiSpelerRegistratie$4
+projectbdatabase.views.HuidigToernooiSpelerRegistratie$3
